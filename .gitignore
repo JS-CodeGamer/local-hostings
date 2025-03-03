@@ -1,0 +1,4 @@
+copyparty/config/
+*.env
+nextcloud/daily-maintenance.sh
+

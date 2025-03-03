@@ -1,0 +1,19 @@
+include:
+  - ./nextcloud/docker-compose.yaml
+  - ./pastebin/docker-compose.yaml
+  - ./copyparty/docker-compose.yaml
+services:
+  tunnel:
+    image: cloudflare/cloudflared
+    restart: always
+    env_file:
+      - .tunnel.env
+    command: tunnel run
+    environment:
+      NO_AUTOUPDATE: true
+    networks:
+        - tunnel
+
+networks:
+  tunnel:
+

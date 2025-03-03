@@ -1,0 +1,97 @@
+services:
+  nc-web:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - ${PORT_NEXTCLOUD:-80}:80
+    volumes:
+      - nc_app:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nc-app
+    networks:
+      - nc_internal
+      - tunnel
+
+  nc-app:
+    image: nextcloud:personal
+    build: .
+    restart: always
+    volumes:
+      - nc_app:/var/www/html
+    environment:
+      - POSTGRES_HOST=nc-db
+      - REDIS_HOST=nc-redis
+    env_file:
+      - ${ENV_NC:-.env}
+    depends_on:
+      - nc-db
+      - nc-redis
+    networks:
+      - nc_internal
+
+  nc-db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - nc_db:/var/lib/postgresql/data
+    env_file:
+      - ${ENV_NC_DB:-.env}
+    networks:
+      - nc_internal
+
+  nc-redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - nc_redis:/data
+    networks:
+      - nc_internal
+
+  # nextcloud + custom cron jobs
+  # please check build folder for details
+  nc-cron:
+    extends: nc-app
+    depends_on:
+      - nc-db
+      - nc-redis
+    entrypoint: /cron.sh
+
+  nc-go-vod:
+    image: radialapps/go-vod
+    restart: always
+    depends_on:
+      - nc-web
+    env_file:
+      - ${ENV_NC_GO_VOD:-.env}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - nc_app:/var/www/html:ro
+    runtime: nvidia # (NVENC)
+    networks:
+      - nc_internal
+
+
+networks:
+  nc_internal:
+
+volumes:
+  nc_app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $NC_DATA
+  nc_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $NC_DB
+  nc_redis:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $NC_REDIS
