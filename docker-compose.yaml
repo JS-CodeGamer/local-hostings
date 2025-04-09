@@ -1,7 +1,7 @@
 include:
   - ./nextcloud/docker-compose.yaml
-  - ./pastebin/docker-compose.yaml
   - ./copyparty/docker-compose.yaml
+  - ./vault-warden/docker-compose.yaml
 services:
   tunnel:
     image: cloudflare/cloudflared
@@ -13,7 +13,12 @@ services:
       NO_AUTOUPDATE: true
     networks:
         - tunnel
+  pastebin:
+    extends:
+        file: ./pastebin/docker-compose.yaml
+        service: pastebin
+    networks:
+      - tunnel
 
 networks:
   tunnel:
-

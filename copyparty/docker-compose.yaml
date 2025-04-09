@@ -1,25 +1,13 @@
 services:
   share:
     image: copyparty/ac
-    restart: no
+    restart: always
     volumes:
-      - cp_share:/w
-      - cp_config:/cfg
+      - $CP_SHARE:/w
+      - $CONF_CP:/cfg
       - cp_cache:/cache
     ports:
       - 3923:3923
 
 volumes:
-  cp_share:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $CP_SHARE
-  cp_config:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $CONF_CP
   cp_cache:

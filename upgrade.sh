@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 docker compose down
 
 # create backup
@@ -12,10 +12,12 @@ sudo mv /media/data/nextcloud/{db,db-old}
 sudo mkdir /media/data/nextcloud/db
 sudo chown 70 /media/data/nextcloud/db
 
+# build and upgrade
+docker compose pull --include-deps --policy always --ignore-buildable
+docker compose build
+
 # restore backup
-docker compose pull --include-deps --policy always
 docker compose up --wait nc-db
 cat dump.sql | docker compose exec -T nc-db psql -U postgres
 
-docker compose build
 docker compose up --wait

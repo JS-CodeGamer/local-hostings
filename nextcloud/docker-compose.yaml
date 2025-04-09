@@ -3,7 +3,7 @@ services:
     image: nginx:alpine
     restart: always
     ports:
-      - ${PORT_NEXTCLOUD:-80}:80
+      - ${PORT_NC:-80}:80
     volumes:
       - nc_app:/var/www/html:ro
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
