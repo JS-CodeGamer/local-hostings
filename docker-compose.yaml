@@ -12,11 +12,11 @@ services:
     environment:
       NO_AUTOUPDATE: true
     networks:
-        - tunnel
+      - tunnel
   pastebin:
     extends:
-        file: ./pastebin/docker-compose.yaml
-        service: pastebin
+      file: ./pastebin/docker-compose.yaml
+      service: pastebin
     networks:
       - tunnel
 

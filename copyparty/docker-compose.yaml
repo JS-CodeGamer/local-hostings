@@ -7,7 +7,7 @@ services:
       - $CONF_CP:/cfg
       - cp_cache:/cache
     ports:
-      - 3923:3923
+      - ${PORT_CP:-3923}:3923
 
 volumes:
   cp_cache:
