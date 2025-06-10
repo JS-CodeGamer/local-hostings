@@ -1,7 +1,7 @@
 include:
   - ./nextcloud/docker-compose.yaml
   - ./copyparty/docker-compose.yaml
-  - ./vault-warden/docker-compose.yaml
+  # - ./vault-warden/docker-compose.yaml
 services:
   tunnel:
     image: cloudflare/cloudflared
