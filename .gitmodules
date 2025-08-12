@@ -1,3 +1,4 @@
 [submodule "pastebin"]
 	path = pastebin
-	url = git@github.com:JS-CodeGamer/rust-pastebin-rocket.git
+  url = git@github.com:JS-CodeGamer/rust-pastebin-rocket.git
+  branch = podman

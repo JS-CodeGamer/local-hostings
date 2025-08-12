@@ -1,10 +1,9 @@
 include:
   - ./nextcloud/docker-compose.yaml
   - ./copyparty/docker-compose.yaml
-  # - ./vault-warden/docker-compose.yaml
 services:
   tunnel:
-    image: cloudflare/cloudflared
+    image: docker.io/cloudflare/cloudflared
     restart: always
     env_file:
       - .tunnel.env

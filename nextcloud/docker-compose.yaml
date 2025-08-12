@@ -1,12 +1,12 @@
 services:
   nc-web:
-    image: nginx:alpine
+    image: docker.io/library/nginx:alpine
     restart: always
     ports:
       - ${PORT_NC:-80}:80
     volumes:
       - nc_app:/var/www/html:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${NGINX_CONF:-./nginx.conf}:/etc/nginx/nginx.conf:ro
     depends_on:
       - nc-app
     networks:
@@ -31,17 +31,17 @@ services:
       - nc_internal
 
   nc-db:
-    image: postgres:alpine
+    image: docker.io/library/postgres:alpine
     restart: always
     volumes:
       - nc_db:/var/lib/postgresql/data
     env_file:
-      - ${ENV_NC_DB:-.env}
+      - ${ENV_NC_DB:-./.env}
     networks:
       - nc_internal
 
   nc-redis:
-    image: redis:alpine
+    image: docker.io/library/redis:alpine
     restart: always
     volumes:
       - nc_redis:/data
@@ -58,12 +58,12 @@ services:
     entrypoint: /cron.sh
 
   nc-go-vod:
-    image: radialapps/go-vod
+    image: docker.io/radialapps/go-vod
     restart: always
     depends_on:
       - nc-web
     env_file:
-      - ${ENV_NC_GO_VOD:-.env}
+      - ${ENV_NC_GO_VOD:-./.env}
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     volumes:
@@ -71,7 +71,6 @@ services:
     runtime: nvidia # (NVENC)
     networks:
       - nc_internal
-
 
 networks:
   nc_internal:

@@ -1,13 +1,27 @@
 services:
   share:
-    image: copyparty/ac
+    image: docker.io/copyparty/ac
     restart: always
     volumes:
-      - $CP_SHARE:/w
-      - $CONF_CP:/cfg
+      - cp_share:/w
+      - cp_data:/cfg
       - cp_cache:/cache
     ports:
       - ${PORT_CP:-3923}:3923
+    networks:
+      - tunnel
 
 volumes:
   cp_cache:
+  cp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $CONF_CP
+  cp_share:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $CP_SHARE
