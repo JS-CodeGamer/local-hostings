@@ -3,7 +3,7 @@ services:
     image: docker.io/copyparty/ac
     restart: always
     volumes:
-      - cp_share:/w
+      - /media:/w
       - cp_data:/cfg
       - cp_cache:/cache
     ports:
@@ -19,9 +19,3 @@ volumes:
       type: none
       o: bind
       device: $CONF_CP
-  cp_share:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $CP_SHARE
