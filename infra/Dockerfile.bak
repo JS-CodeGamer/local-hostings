@@ -1,0 +1,37 @@
+# ── Stage 1: Build ────────────────────────────────────────────────────────────
+FROM docker.io/library/rust:alpine AS builder
+
+WORKDIR /build
+
+# Cache dependency compilation separately from source compilation
+COPY Cargo.toml Cargo.lock ./
+
+# Create a dummy main so `cargo build --release` caches dependencies
+RUN mkdir src && echo "fn main() {}" > src/main.rs \
+  && cargo build --release \
+  && rm -rf src
+
+COPY . .
+
+RUN cargo build --release
+
+# ── Stage 2: Runtime ──────────────────────────────────────────────────────────
+FROM docker.io/library/alpine:latest AS runtime
+
+RUN apk add --no-cache ca-certificates curl
+
+# Copy the compiled binary (replace `pastebin` with your actual binary name)
+COPY --from=builder /build/target/release/pastebin /bin/pastebin
+
+# Rocket.toml must sit next to the binary
+WORKDIR /app
+COPY Rocket.toml .
+
+# Rocket listens on 8000 by default; match in Rocket.toml if you change this
+EXPOSE 80
+
+ENV ROCKET_ENV=production
+
+ENTRYPOINT ["/bin/pastebin"]
+CMD [ "--upload", "/pastes"]
+

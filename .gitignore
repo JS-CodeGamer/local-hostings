@@ -1,4 +1,9 @@
-copyparty/config/
-*.env
-nextcloud/daily-maintenance.sh
+# Ignore everything in the data recursively
+data/**
+
+# Allow directories so git can traverse them
+!data/**/
+
+# Allow .example files anywhere inside
+!data/**/*.example
 
